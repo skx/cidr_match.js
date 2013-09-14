@@ -42,5 +42,12 @@ We only consider IPv4 addresses, by desgin.
 This code was abstracted from the [blogspam.js](https://github.com/skx/blogspam.js) repository.
 
 
+License
+-------
+
+Please consider this licensed under the two-clause BSD license, included in the
+file [LICENSE](LICENSE).
+
+
 Steve
 ---
