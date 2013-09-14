@@ -43,20 +43,13 @@
 
 
      //
-     //  CIDR-matching.
+     //  Determine whether the given IP falls within the specified
+     // CIDR range.
      //
      function cidr_match( ip, range ) {
 
          //
-         // 1.  Log.
-         //
-         console.log( "Looking for " + ip + " in " + range );
-
-
-
-         //
-         //  If the range doesn't have a slash it
-         // will only match if identical to the IP.
+         //  If the range doesn't have a slash it will only match if identical to the IP.
          //
          if ( range.indexOf( "/" ) < 0 )
          {
@@ -67,73 +60,60 @@
          //  Split the range by the slash
          //
          var parsed = range.split( "/" );
+         if ( parsed.length != 2 )
+         {
+             console.log( "Failed to match CIDR-range on '/'" );
+             return false;
+         }
+
 
          //
          //  Pad out the base until it is four-parts long
+         //
+         //  e.g. This allows 10.0/16 to be the same as 10.0.0.0/16
+         //
          while( parsed[0].split( "." ).length < 4 )
          {
              parsed[0] += ".0";
          }
 
+         //
+         //  The number of IPs in the range.
+         //
+         //  e.g. /24 == 256 IPs.
+         //
          var ips = 0;
 
-         switch(parsed[1]) {
-         case "16":
-             ips = 65536; break;
-         case "17":
-             ips = 32768; break;
-         case "18":
-             ips = 16385; break;
-         case "19":
-             ips = 8192; break;
-         case "20":
-             ips = 4096; break;
-         case "21":
-             ips = 2048; break;
-         case "22":
-             ips = 1024; break;
-         case "23":
-             ips = 256; break;
-         case "24":
-             ips = 256; break;
-         case "25":
-             ips = 128; break;
-         case "26":
-             ips = 64; break;
-         case "27":
-             ips = 32; break;
-         case "28":
-             ips = 16; break;
-         case "29":
-             ips = 8; break;
-         case "30":
-             ips = 4; break;
-         case "31":
-             ips = 2; break;
-         case "32":
-             count = 1; break;
-         default:
-             console.log( "CIDR - failed to match  " + range );
-             ips = 0; break;
-         };
+         //
+         //  Work out how many IPs the /slash-part matches.
+         //
+         //  We run 2^(32-slash)
+         //
+         //
+         ips = 32 - parseInt(parsed[1],10);
+         ips = Math.pow( 2, ips)
 
          //
-         // Work out how many wildcard bits there are.
+         // Logging
          //
-         console.log( "Range: " + range + " became " + parsed[0] + ":" + parsed[1] );
-         console.log( "Which covers " + ips + " ips");
+         // console.log( "Range: " + range + " became " + parsed[0] + "'/'" + parsed[1] );
+         // console.log( "Which covers " + ips + " ips");
 
          //
          // OK so we convert the starting IP to a long, and then calculate an ending-IP
+         // by adding on the number of IPs the slash covers.
          //
          var ip_start = ip2long( parsed[0] );
          var ip_end   = ip_start + ips;
 
          //
-         //  Now convert the IP we're testing
+         //  Now convert the IP we're testing to a long.
          //
          var ip_long = ip2long( ip );
 
+         //
+         // Is it within the range?  If so we've a match.
+         //
          if ( ( ip_long <= ip_end ) && ( ip_long >= ip_start ) )
          {
              return true;
