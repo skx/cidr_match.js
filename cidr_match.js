@@ -114,7 +114,7 @@
          //
          // Is it within the range?  If so we've a match.
          //
-         if ( ( ip_long <= ip_end ) && ( ip_long >= ip_start ) )
+         if ( ( ip_long < ip_end ) && ( ip_long >= ip_start ) )
          {
              return true;
          }
