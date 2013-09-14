@@ -1,7 +1,50 @@
 (function ()
  {
+
+     function ip2long( a, b, c, d ) {
+         for (
+             c = b = 0;
+             d = a.split('.')[b++];
+             c +=
+             d >> 8
+                 |
+                 b > 4 ?
+                 NaN
+                 :
+                 d * (1 << -8 * b)
+         )
+             d = parseInt(
+                     +d
+                     &&
+                     d
+             );
+         return c
+     }
+
+
+     //
+     //  Convert a long integer to an IP address.
+     //
+     function long2ip(i) {
+         return(
+         1 << -1 <= i
+             &&
+         i < 4294967296
+             &&
+         [
+             i >>> 24, // calculate the first octet
+             255 & i >>> 16, // calculate the second octet
+             255 & i >>> 8, // calculate the third octet
+             255 & i // calculate the fourth octet
+         ].join('.')) // combine the octets into dot-decimal notation
+     }
+
+     //
+     //  Naive CIDR-matching.
+     //
      function cidr_match( ip, range ) {
 
+         console.log( "Looking for " + ip + " in " + range );
          //
          //  The CIDR regexp.
          //
@@ -86,5 +129,8 @@
      //
      var exports = {};
      exports.cidr_match = cidr_match;
+     exports.long2ip    = long2ip;
+     exports.ip2long    = ip2long;
+
      module.exports = exports;
 }());
