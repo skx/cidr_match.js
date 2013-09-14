@@ -2,7 +2,7 @@
   "author": "Steve Kemp (steve@steve.org.uk)",
   "name": "cidr_match",
   "description": "A simple module to test whether a given IPv4 address is within a particular CIDR range.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "keywords": [
     "IP Address",
     "CIDR",
