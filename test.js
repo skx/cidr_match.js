@@ -1,7 +1,7 @@
 //
 //  Require our code.
 //
-var c = require( "./cidr_match" );
+var c = require( "cidr_match" );
 
 //
 // Does it match?
