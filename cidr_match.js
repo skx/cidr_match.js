@@ -1,6 +1,8 @@
 (function ()
  {
-
+     //
+     // Convert an IP to a long integer.
+     //
      function ip2long( a, b, c, d ) {
          for (
              c = b = 0;
@@ -39,88 +41,107 @@
          ].join('.')) // combine the octets into dot-decimal notation
      }
 
+
      //
-     //  Naive CIDR-matching.
+     //  CIDR-matching.
      //
      function cidr_match( ip, range ) {
 
+         //
+         // 1.  Log.
+         //
          console.log( "Looking for " + ip + " in " + range );
-         //
-         //  The CIDR regexp.
-         //
-         var cidr = /^([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\/([0-9]+)$/;
+
 
 
          //
-         // Is the IP value a CIDR range?
+         //  If the range doesn't have a slash it
+         // will only match if identical to the IP.
          //
-         var cidr_match = cidr.exec( range );
-         if ( cidr_match )
+         if ( range.indexOf( "/" ) < 0 )
          {
-             //
-             // We work out how many wildcard bits there are.
-             //
-             // And how many IPs that range matches.  The biggest
-             // range we care about is a /24, because we're naive.
-             //
-             var slash = cidr_match[5];
-             var count = 256;
-
-             switch(slash){
-                 //
-                 // People can/will/do submit 192.168.0.0/255
-                 // because they don't understand how CIDR works.
-                 //
-             case "255":
-                 count = 256; break;
-
-             case "24":
-                 count = 256; break;
-             case "25":
-                 count = 128; break;
-             case "26":
-                 count = 64; break;
-             case "27":
-                 count = 32; break;
-             case "28":
-                 count = 16; break;
-             case "29":
-                 count = 8; break;
-             case "30":
-                 count = 4; break;
-             case "31":
-                 count = 2; break;
-             case "32":
-                 count = 1; break;
-             default:
-                 console.log( "CIDR - failed to match  " + range );
-                 count = 0; break;
-             };
-             //
-             // We setup a loop to iterate.
-             //
-             var match = false;
-             for ( var i = 0; i < count ; i++ )
-             {
-                 //
-                 //  Build up the IP from 1.2.3.(4+i)
-                 //
-                 var tmp = cidr_match[1] + "." +
-                     cidr_match[2] + "." +
-                     cidr_match[3] + "." +
-                     ( parseInt(cidr_match[4],10) + parseInt(i,10) );
-
-                 //
-                 //  Does it match the submitters IP?
-                 //
-                 if ( tmp == ip ) {
-                     return true;
-                 }
-             }
-
+             return ( ip == range );
          }
 
-         return false;
+         //
+         //  Split the range by the slash
+         //
+         var parsed = range.split( "/" );
+
+         //
+         //  Pad out the base until it is four-parts long
+         while( parsed[0].split( "." ).length < 4 )
+         {
+             parsed[0] += ".0";
+         }
+
+         var ips = 0;
+
+         switch(parsed[1]) {
+         case "16":
+             ips = 65536; break;
+         case "17":
+             ips = 32768; break;
+         case "18":
+             ips = 16385; break;
+         case "19":
+             ips = 8192; break;
+         case "20":
+             ips = 4096; break;
+         case "21":
+             ips = 2048; break;
+         case "22":
+             ips = 1024; break;
+         case "23":
+             ips = 256; break;
+         case "24":
+             ips = 256; break;
+         case "25":
+             ips = 128; break;
+         case "26":
+             ips = 64; break;
+         case "27":
+             ips = 32; break;
+         case "28":
+             ips = 16; break;
+         case "29":
+             ips = 8; break;
+         case "30":
+             ips = 4; break;
+         case "31":
+             ips = 2; break;
+         case "32":
+             count = 1; break;
+         default:
+             console.log( "CIDR - failed to match  " + range );
+             ips = 0; break;
+         };
+
+         //
+         // Work out how many wildcard bits there are.
+         //
+         console.log( "Range: " + range + " became " + parsed[0] + ":" + parsed[1] );
+         console.log( "Which covers " + ips + " ips");
+
+         //
+         // OK so we convert the starting IP to a long, and then calculate an ending-IP
+         //
+         var ip_start = ip2long( parsed[0] );
+         var ip_end   = ip_start + ips;
+
+         //
+         //  Now convert the IP we're testing
+         //
+         var ip_long = ip2long( ip );
+
+         if ( ( ip_long <= ip_end ) && ( ip_long >= ip_start ) )
+         {
+             return true;
+         }
+         else
+         {
+             return false;
+         }
      };
 
 

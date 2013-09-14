@@ -13,6 +13,7 @@ var assert = require('assert');
 //
 assert(c.cidr_match ("10.0.0.24", "10.0.0.0/24" ) );
 assert(c.cidr_match ("10.0.0.240", "10.0.0.0/24" ) );
+assert(c.cidr_match ("10.0.0.240", "10.0/16" ) );
 
 assert( ! ( c.cidr_match ("10.0.0.24", "10.0.1.0/24" )  ) );
 
