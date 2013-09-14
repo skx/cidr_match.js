@@ -15,6 +15,6 @@
   "bugs": {
     "url": "https://github.com/skx/cidr_match.js/issues"
   },
-  { "license" : "BSD" },
+  "license" : "BSD",
   "main": "cidr_match.js"
 }
